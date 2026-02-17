@@ -1206,7 +1206,7 @@ function submitAnswer() {
   currentQuestionIndex++;
 
   if (currentQuestionIndex < questions.length) {
-    setTimeout(loadQuestion, 1800);
+    currentQuestionIndex++;
   } else {
     finishExam();
   }
