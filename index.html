@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SCFHS STR Adaptive Tie-Breaker Exam</title>
+<style>
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f4f6f8;
+  margin: 0;
+  padding: 0;
+}
+.container {
+  max-width: 900px;
+  margin: 30px auto;
+  background: #fff;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.1);
+}
+h1, h2 {
+  text-align: center;
+}
+.question {
+  font-weight: bold;
+  margin-top: 20px;
+}
+.options label {
+  display: block;
+  padding: 8px;
+  margin: 6px 0;
+  background: #f1f1f1;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.options input {
+  margin-right: 10px;
+}
+button {
+  margin-top: 20px;
+  padding: 12px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.rationale {
+  margin-top: 15px;
+  padding: 12px;
+  background: #eef5ff;
+  border-left: 4px solid #2b6cb0;
+  display: none;
+}
+.correct {
+  color: green;
+  font-weight: bold;
+}
+.incorrect {
+  color: red;
+  font-weight: bold;
+}
+.hidden {
+  display: none;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>SCFHS STR Tie-Breaker Examination</h1>
+
+<div id="startScreen">
+  <h2>Candidate Information</h2>
+  <label>Name:</label><br>
+  <input type="text" id="studentName"><br><br>
+  <label>ID Number:</label><br>
+  <input type="text" id="studentID"><br><br>
+  <button onclick="startExam()">Start Exam</button>
+</div>
+
+<div id="examScreen" class="hidden">
+  <div id="questionContainer"></div>
+  <button onclick="submitAnswer()">Submit Answer</button>
+  <div id="rationale" class="rationale"></div>
+</div>
+
+<div id="resultScreen" class="hidden">
+  <h2>Result Summary</h2>
+  <p id="summary"></p>
+</div>
+
+</div>
+
+<script>
+let currentQuestionIndex = 0;
+let score = 0;
+
+const questions = [
+{
+q: "A 68-year-old patient with acute ischemic stroke is admitted 2 hours after symptom onset. Which nursing action is the highest priority?",
+options: [
+"Maintain head of bed flat to improve cerebral perfusion",
+"Administer prescribed thrombolytic after screening",
+"Initiate oral feeding to prevent hypoglycemia",
+"Apply intermittent pneumatic compression devices"
+],
+answer: "Administer prescribed thrombolytic after screening",
+rationale: "Early administration of thrombolytics within the therapeutic window significantly improves neurological outcomes. Other interventions are secondary."
+},
+
+{
+q: "A patient receiving enteral feeding via nasogastric tube suddenly develops coughing and dyspnea. What is the nurse’s FIRST action?",
+options: [
+"Stop the feeding immediately",
+"Increase the feeding rate",
+"Suction the airway",
+"Check gastric residual volume"
+],
+answer: "Stop the feeding immediately",
+rationale: "Coughing and dyspnea suggest aspiration. Feeding must be stopped immediately before further assessment or intervention."
+},
+
+{
+q: "Which finding most strongly indicates fluid volume overload in a patient with heart failure?",
+options: [
+"Bounding peripheral pulses",
+"Bilateral basal crackles",
+"Decreased urine output",
+"Elevated blood glucose"
+],
+answer: "Bilateral basal crackles",
+rationale: "Crackles indicate pulmonary congestion from excess intravascular volume, a hallmark of fluid overload."
+},
+
+{
+q: "A nurse is preparing to administer insulin glargine. Which statement is correct?",
+options: [
+"It can be mixed with regular insulin",
+"It is administered intravenously",
+"It has no pronounced peak",
+"It must be given before meals"
+],
+answer: "It has no pronounced peak",
+rationale: "Insulin glargine provides basal insulin coverage with minimal peak, reducing hypoglycemia risk."
+},
+
+{
+q: "A postoperative patient suddenly becomes restless, tachycardic, and hypotensive. What complication should the nurse suspect FIRST?",
+options: [
+"Pulmonary embolism",
+"Hypoglycemia",
+"Atelectasis",
+"Urinary retention"
+],
+answer: "Pulmonary embolism",
+rationale: "Sudden hemodynamic instability and respiratory symptoms postoperatively strongly suggest pulmonary embolism."
+},
+
+/* ---------- CONTINUE ADDING QUESTIONS HERE (up to 100) ---------- */
+
+];
+
+shuffleArray(questions);
+
+function startExam() {
+  if (!studentName.value || !studentID.value) {
+    alert("Please enter Name and ID.");
+    return;
+  }
+  document.getElementById("startScreen").classList.add("hidden");
+  document.getElementById("examScreen").classList.remove("hidden");
+  loadQuestion();
+}
+
+function loadQuestion() {
+  document.getElementById("rationale").style.display = "none";
+  const q = questions[currentQuestionIndex];
+  let html = `<div class="question">Q${currentQuestionIndex + 1}. ${q.q}</div><div class="options">`;
+  shuffleArray(q.options);
+  q.options.forEach(opt => {
+    html += `<label><input type="radio" name="option" value="${opt}">${opt}</label>`;
+  });
+  html += `</div>`;
+  document.getElementById("questionContainer").innerHTML = html;
+}
+
+function submitAnswer() {
+  const selected = document.querySelector('input[name="option"]:checked');
+  if (!selected) {
+    alert("Select an answer.");
+    return;
+  }
+
+  const q = questions[currentQuestionIndex];
+  const rationaleDiv = document.getElementById("rationale");
+
+  if (selected.value === q.answer) {
+    score++;
+    rationaleDiv.innerHTML = `<span class="correct">Correct.</span><br>${q.rationale}`;
+  } else {
+    rationaleDiv.innerHTML = `<span class="incorrect">Incorrect.</span><br><strong>Correct answer:</strong> ${q.answer}<br>${q.rationale}`;
+  }
+
+  rationaleDiv.style.display = "block";
+  currentQuestionIndex++;
+
+  if (currentQuestionIndex < questions.length) {
+    setTimeout(loadQuestion, 1800);
+  } else {
+    finishExam();
+  }
+}
+
+function finishExam() {
+  document.getElementById("examScreen").classList.add("hidden");
+  document.getElementById("resultScreen").classList.remove("hidden");
+  document.getElementById("summary").innerText =
+    `${studentName.value} (${studentID.value}) scored ${score}/${questions.length}
+Result: ${score >= questions.length * 0.7 ? "GO" : "NOT GO"}`;
+}
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+</script>
+</body>
+</html>
