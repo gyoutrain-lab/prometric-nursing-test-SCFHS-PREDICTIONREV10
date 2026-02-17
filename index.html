@@ -1161,7 +1161,11 @@ rationale: "Agonal breathing is a sign of severe hypoxia and impending cardiac a
 
 ];
 
+<script>
 shuffleArray(questions);
+
+let currentQuestionIndex = 0;
+let score = 0;
 
 function startExam() {
   if (!studentName.value || !studentID.value) {
@@ -1174,12 +1178,11 @@ function startExam() {
 }
 
 function loadQuestion() {
-  document.getElementById("rationale").style.display = "none";
   const q = questions[currentQuestionIndex];
   let html = `<div class="question">Q${currentQuestionIndex + 1}. ${q.q}</div><div class="options">`;
   shuffleArray(q.options);
   q.options.forEach(opt => {
-    html += `<label><input type="radio" name="option" value="${opt}">${opt}</label>`;
+    html += `<label><input type="radio" name="option" value="${opt}"> ${opt}</label>`;
   });
   html += `</div>`;
   document.getElementById("questionContainer").innerHTML = html;
@@ -1197,16 +1200,25 @@ function submitAnswer() {
 
   if (selected.value === q.answer) {
     score++;
-    rationaleDiv.innerHTML = `<span class="correct">Correct.</span><br>${q.rationale}`;
+    rationaleDiv.innerHTML =
+      `<span class="correct">Correct.</span><br>${q.rationale}`;
   } else {
-    rationaleDiv.innerHTML = `<span class="incorrect">Incorrect.</span><br><strong>Correct answer:</strong> ${q.answer}<br>${q.rationale}`;
+    rationaleDiv.innerHTML =
+      `<span class="incorrect">Incorrect.</span><br>
+       <strong>Correct answer:</strong> ${q.answer}<br>${q.rationale}`;
   }
 
   rationaleDiv.style.display = "block";
+}
+
+function nextQuestion() {
   currentQuestionIndex++;
 
+  document.getElementById("rationale").style.display = "none";
+  document.getElementById("rationale").innerHTML = "";
+
   if (currentQuestionIndex < questions.length) {
-    setTimeout(loadQuestion, 1800);
+    loadQuestion();
   } else {
     finishExam();
   }
