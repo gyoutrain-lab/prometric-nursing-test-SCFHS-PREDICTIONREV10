@@ -1162,29 +1162,49 @@ rationale: "Agonal breathing is a sign of severe hypoxia and impending cardiac a
 ];
 
 <script>
-shuffleArray(questions);
-
 let currentQuestionIndex = 0;
 let score = 0;
 
+const studentName = document.getElementById("studentName");
+const studentID = document.getElementById("studentID");
+
+shuffleArray(questions);
+
 function startExam() {
-  if (!studentName.value || !studentID.value) {
+  if (!studentName.value.trim() || !studentID.value.trim()) {
     alert("Please enter Name and ID.");
     return;
   }
+
   document.getElementById("startScreen").classList.add("hidden");
   document.getElementById("examScreen").classList.remove("hidden");
+
   loadQuestion();
 }
 
 function loadQuestion() {
   const q = questions[currentQuestionIndex];
-  let html = `<div class="question">Q${currentQuestionIndex + 1}. ${q.q}</div><div class="options">`;
+
+  let html = `
+    <div class="question">
+      Q${currentQuestionIndex + 1}. ${q.q}
+    </div>
+    <div class="options">
+  `;
+
   shuffleArray(q.options);
+
   q.options.forEach(opt => {
-    html += `<label><input type="radio" name="option" value="${opt}"> ${opt}</label>`;
+    html += `
+      <label>
+        <input type="radio" name="option" value="${opt}">
+        ${opt}
+      </label><br>
+    `;
   });
+
   html += `</div>`;
+
   document.getElementById("questionContainer").innerHTML = html;
 }
 
@@ -1214,8 +1234,9 @@ function submitAnswer() {
 function nextQuestion() {
   currentQuestionIndex++;
 
-  document.getElementById("rationale").style.display = "none";
-  document.getElementById("rationale").innerHTML = "";
+  const rationaleDiv = document.getElementById("rationale");
+  rationaleDiv.style.display = "none";
+  rationaleDiv.innerHTML = "";
 
   if (currentQuestionIndex < questions.length) {
     loadQuestion();
@@ -1227,6 +1248,7 @@ function nextQuestion() {
 function finishExam() {
   document.getElementById("examScreen").classList.add("hidden");
   document.getElementById("resultScreen").classList.remove("hidden");
+
   document.getElementById("summary").innerText =
     `${studentName.value} (${studentID.value}) scored ${score}/${questions.length}
 Result: ${score >= questions.length * 0.7 ? "GO" : "NOT GO"}`;
@@ -1239,5 +1261,6 @@ function shuffleArray(arr) {
   }
 }
 </script>
+
 </body>
 </html>
