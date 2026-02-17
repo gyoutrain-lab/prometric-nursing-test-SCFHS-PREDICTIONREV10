@@ -1161,61 +1161,30 @@ rationale: "Agonal breathing is a sign of severe hypoxia and impending cardiac a
 
 ];
 
-<script>
-/* ===== GLOBALS ===== */
-let currentQuestionIndex = 0;
-let score = 0;
-
-const studentName = document.getElementById("studentName");
-const studentID = document.getElementById("studentID");
-
-/* ===== START ===== */
 shuffleArray(questions);
 
 function startExam() {
-  if (!studentName.value.trim() || !studentID.value.trim()) {
+  if (!studentName.value || !studentID.value) {
     alert("Please enter Name and ID.");
     return;
   }
-
   document.getElementById("startScreen").classList.add("hidden");
   document.getElementById("examScreen").classList.remove("hidden");
-
   loadQuestion();
 }
 
-/* ===== LOAD QUESTION ===== */
 function loadQuestion() {
-  const q = questions[currentQuestionIndex];
-
   document.getElementById("rationale").style.display = "none";
-  document.getElementById("submitBtn").disabled = false;
-  document.getElementById("nextBtn").style.display = "none";
-
-  let html = `
-    <div class="question">
-      Q${currentQuestionIndex + 1}. ${q.q}
-    </div>
-    <div class="options">
-  `;
-
+  const q = questions[currentQuestionIndex];
+  let html = `<div class="question">Q${currentQuestionIndex + 1}. ${q.q}</div><div class="options">`;
   shuffleArray(q.options);
-
   q.options.forEach(opt => {
-    html += `
-      <label>
-        <input type="radio" name="option" value="${opt}">
-        ${opt}
-      </label><br>
-    `;
+    html += `<label><input type="radio" name="option" value="${opt}">${opt}</label>`;
   });
-
   html += `</div>`;
-
   document.getElementById("questionContainer").innerHTML = html;
 }
 
-/* ===== SUBMIT ===== */
 function submitAnswer() {
   const selected = document.querySelector('input[name="option"]:checked');
   if (!selected) {
@@ -1228,42 +1197,29 @@ function submitAnswer() {
 
   if (selected.value === q.answer) {
     score++;
-    rationaleDiv.innerHTML =
-      `<span class="correct">Correct.</span><br>${q.rationale}`;
+    rationaleDiv.innerHTML = `<span class="correct">Correct.</span><br>${q.rationale}`;
   } else {
-    rationaleDiv.innerHTML =
-      `<span class="incorrect">Incorrect.</span><br>
-       <strong>Correct answer:</strong> ${q.answer}<br>${q.rationale}`;
+    rationaleDiv.innerHTML = `<span class="incorrect">Incorrect.</span><br><strong>Correct answer:</strong> ${q.answer}<br>${q.rationale}`;
   }
 
   rationaleDiv.style.display = "block";
-
-  document.getElementById("submitBtn").disabled = true;
-  document.getElementById("nextBtn").style.display = "inline-block";
-}
-
-/* ===== NEXT ===== */
-function nextQuestion() {
   currentQuestionIndex++;
 
   if (currentQuestionIndex < questions.length) {
-    loadQuestion();
+    setTimeout(loadQuestion, 10800);
   } else {
     finishExam();
   }
 }
 
-/* ===== FINISH ===== */
 function finishExam() {
   document.getElementById("examScreen").classList.add("hidden");
   document.getElementById("resultScreen").classList.remove("hidden");
-
   document.getElementById("summary").innerText =
     `${studentName.value} (${studentID.value}) scored ${score}/${questions.length}
 Result: ${score >= questions.length * 0.7 ? "GO" : "NOT GO"}`;
 }
 
-/* ===== SHUFFLE ===== */
 function shuffleArray(arr) {
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -1271,7 +1227,6 @@ function shuffleArray(arr) {
   }
 }
 </script>
-
 
 </body>
 </html>
