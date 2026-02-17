@@ -1197,21 +1197,34 @@ function submitAnswer() {
 
   if (selected.value === q.answer) {
     score++;
-    rationaleDiv.innerHTML = `<span class="correct">Correct.</span><br>${q.rationale}`;
+    rationaleDiv.innerHTML =
+      `<span class="correct">Correct.</span><br>${q.rationale}`;
   } else {
-    rationaleDiv.innerHTML = `<span class="incorrect">Incorrect.</span><br><strong>Correct answer:</strong> ${q.answer}<br>${q.rationale}`;
+    rationaleDiv.innerHTML =
+      `<span class="incorrect">Incorrect.</span><br>
+       <strong>Correct answer:</strong> ${q.answer}<br>${q.rationale}`;
   }
 
   rationaleDiv.style.display = "block";
+
+  // disable submit, show next
+  document.getElementById("submitBtn").disabled = true;
+  document.getElementById("nextBtn").style.display = "inline-block";
+}
+}
+function nextQuestion() {
+  document.getElementById("rationale").style.display = "none";
+  document.getElementById("submitBtn").disabled = false;
+  document.getElementById("nextBtn").style.display = "none";
+
   currentQuestionIndex++;
 
   if (currentQuestionIndex < questions.length) {
-    currentQuestionIndex++;
+    loadQuestion();
   } else {
     finishExam();
   }
-}
-
+  }
 function finishExam() {
   document.getElementById("examScreen").classList.add("hidden");
   document.getElementById("resultScreen").classList.remove("hidden");
