@@ -1161,50 +1161,27 @@ rationale: "Agonal breathing is a sign of severe hypoxia and impending cardiac a
 
 ];
 
-
-let currentQuestionIndex = 0;
-let score = 0;
-
-const studentName = document.getElementById("studentName");
-const studentID = document.getElementById("studentID");
-
 shuffleArray(questions);
 
 function startExam() {
-  if (!studentName.value.trim() || !studentID.value.trim()) {
+  if (!studentName.value || !studentID.value) {
     alert("Please enter Name and ID.");
     return;
   }
-
   document.getElementById("startScreen").classList.add("hidden");
   document.getElementById("examScreen").classList.remove("hidden");
-
   loadQuestion();
 }
 
 function loadQuestion() {
+  document.getElementById("rationale").style.display = "none";
   const q = questions[currentQuestionIndex];
-
-  let html = `
-    <div class="question">
-      Q${currentQuestionIndex + 1}. ${q.q}
-    </div>
-    <div class="options">
-  `;
-
+  let html = `<div class="question">Q${currentQuestionIndex + 1}. ${q.q}</div><div class="options">`;
   shuffleArray(q.options);
-
   q.options.forEach(opt => {
-    html += `
-      <label>
-        <input type="radio" name="option" value="${opt}">
-        ${opt}
-      </label><br>
-    `;
+    html += `<label><input type="radio" name="option" value="${opt}">${opt}</label>`;
   });
-
   html += `</div>`;
-
   document.getElementById("questionContainer").innerHTML = html;
 }
 
@@ -1220,26 +1197,16 @@ function submitAnswer() {
 
   if (selected.value === q.answer) {
     score++;
-    rationaleDiv.innerHTML =
-      `<span class="correct">Correct.</span><br>${q.rationale}`;
+    rationaleDiv.innerHTML = `<span class="correct">Correct.</span><br>${q.rationale}`;
   } else {
-    rationaleDiv.innerHTML =
-      `<span class="incorrect">Incorrect.</span><br>
-       <strong>Correct answer:</strong> ${q.answer}<br>${q.rationale}`;
+    rationaleDiv.innerHTML = `<span class="incorrect">Incorrect.</span><br><strong>Correct answer:</strong> ${q.answer}<br>${q.rationale}`;
   }
 
   rationaleDiv.style.display = "block";
-}
-
-function nextQuestion() {
   currentQuestionIndex++;
 
-  const rationaleDiv = document.getElementById("rationale");
-  rationaleDiv.style.display = "none";
-  rationaleDiv.innerHTML = "";
-
   if (currentQuestionIndex < questions.length) {
-    loadQuestion();
+    setTimeout(loadQuestion, 1800);
   } else {
     finishExam();
   }
@@ -1248,7 +1215,6 @@ function nextQuestion() {
 function finishExam() {
   document.getElementById("examScreen").classList.add("hidden");
   document.getElementById("resultScreen").classList.remove("hidden");
-
   document.getElementById("summary").innerText =
     `${studentName.value} (${studentID.value}) scored ${score}/${questions.length}
 Result: ${score >= questions.length * 0.7 ? "GO" : "NOT GO"}`;
